@@ -20,6 +20,9 @@ class KeyStoreController < ApplicationController
         if KeyStoreHelper::AVAILABLE_KEYS.length() <= 0
             render json: { status: "ERROR", message: "No keys available"}, status: 404
         else
+            # check and remove expired keys
+            KeyStoreHelper::AVAILABLE_KEYS.purgeOld(300000)
+
             randomKey = KeyStoreHelper::AVAILABLE_KEYS.getRandom
             current_time = Time.now
             KeyStoreHelper::BLOCKED_KEYS.add(randomKey, current_time)
@@ -44,6 +47,7 @@ class KeyStoreController < ApplicationController
 
     def refresh
         key = params[:key]
+        KeyStoreHelper::AVAILABLE_KEYS.purgeOld(300000)
 
         if KeyStoreHelper::AVAILABLE_KEYS.update(key)
             render json: { status: "SUCCESS"}
