@@ -18,5 +18,10 @@ module Keyserver
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.api_only = true
+
+    config.after_initialize do
+        KeyCleanupJob.start
+    end
   end
 end
