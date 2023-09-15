@@ -85,10 +85,16 @@ module KeyStoreHelper
             node = @list.add(key, timestamp)
             @array.push(node)
             @map[key] = @array.length() -1
+
+            return node
         end
 
         def remove(key)
             index = @map[key]
+            if index == nil
+                return false
+            end
+
             node = @array[index]
             @list.remove(node)
 
@@ -97,19 +103,29 @@ module KeyStoreHelper
             @array[index] = last_node
             @map[last_node.value] = index
             @array.pop
+
+            return true
         end
 
         def update(key)
             node = @map[key]
-            node.timestamp = Time.now
             if node
+                node.timestamp = Time.now
                 @list.update(node)
+
+                return true
             end
+
+            return false
         end
 
         def getRandom
             node = @array.sample
-            return { key: node.value, createdAt: node.timestamp}
+            if node == nil
+                return nil
+            end
+
+            return { key: node.value, lastUpdate: node.timestamp}
         end
 
         def length

@@ -4,10 +4,10 @@ Rails.application.routes.draw do
   get "health", to: "health#index"
 
   # keyserver endpoints
-  get "keyserver/generate(/:count)", to: "key_store#generate"
+  post "keyserver/generate(/:count)", to: "key_store#generate"
   get "keyserver/issue", to: "key_store#getRandom"
   put "keyserver/unblock/:key", to: "key_store#unblock"
   delete "keyserver/:key", to: "key_store#delete"
-  post "keyserver/refresh/:key", to: "key_store#refresh"
+  put "keyserver/refresh/:key", to: "key_store#refresh"
 
 end
