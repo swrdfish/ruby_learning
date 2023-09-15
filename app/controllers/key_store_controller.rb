@@ -37,7 +37,30 @@ class KeyStoreController < ApplicationController
 
             render json: { status: "SUCCESS", key: key, lastUpdate: current_time}
         else
-            render json: { status: "ERROR", message: "Invalid or expired key"}
+            render json: { status: "ERROR", message: "Invalid or expired key"}, status: 404
+        end
+    end
+
+    def delete
+        key = params[:key]
+
+        if KeyStoreHelper::BLOCKED_KEYS.remove(key) || KeyStoreHelper::AVAILABLE_KEYS.remove(key)
+            render json: { status: "SUCCESS"}
+        else
+            # This might not be desirable in all situations
+            render json: { status: "ERROR", message: "Invalid or expired key"}, status: 404
+        end
+    end
+
+    def validate
+        key = params[:key]
+
+        if KeyStoreHelper::BLOCKED_KEYS.validateKey(key, 300000)
+            render json: { status: "SUCCESS" }
+        elsif KeyStoreHelper::AVAILABLE_KEYS.validateKey(key, 300000)
+            render json: { status: "ERROR", message: "unissued key"}, status: 401
+        else
+            render json: { status: "ERROR", message: "Invalid or expired key"}, status: 401
         end
     end
 end

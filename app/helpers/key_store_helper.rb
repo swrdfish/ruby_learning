@@ -89,6 +89,19 @@ module KeyStoreHelper
             return node
         end
 
+        def validateKey(key, timeout)
+            index = @map[key]
+
+            if index == nil
+                return false
+            else
+                current_time = Time.now
+                last_updated = @array[index].timestamp
+
+                return (current_time - last_updated).in_milliseconds <= timeout
+            end
+        end
+
         def remove(key)
             index = @map[key]
             if index == nil
@@ -96,6 +109,8 @@ module KeyStoreHelper
             end
 
             node = @array[index]
+
+            #remove from list
             @list.remove(node)
 
             #remove from array
@@ -104,6 +119,8 @@ module KeyStoreHelper
             @map[last_node.value] = index
             @array.pop
 
+            #remove from map
+            @map.delete(key)
             return true
         end
 

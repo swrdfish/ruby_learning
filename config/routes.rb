@@ -9,5 +9,6 @@ Rails.application.routes.draw do
   put "keyserver/unblock/:key", to: "key_store#unblock"
   delete "keyserver/:key", to: "key_store#delete"
   put "keyserver/refresh/:key", to: "key_store#refresh"
+  get "keyserver/validate/:key", to: "key_store#validate" 
 
 end
