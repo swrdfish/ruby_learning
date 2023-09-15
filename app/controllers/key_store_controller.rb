@@ -21,10 +21,11 @@ class KeyStoreController < ApplicationController
             render json: { status: "ERROR", message: "No keys available"}, status: 404
         else
             randomKey = KeyStoreHelper::AVAILABLE_KEYS.getRandom
-            KeyStoreHelper::BLOCKED_KEYS.add(randomKey[:key], randomKey[:lastUpdate])
-            KeyStoreHelper::AVAILABLE_KEYS.remove(randomKey[:key])
+            current_time = Time.now
+            KeyStoreHelper::BLOCKED_KEYS.add(randomKey, current_time)
+            KeyStoreHelper::AVAILABLE_KEYS.remove(randomKey)
 
-            render json: { status: "SUCCESS", key: randomKey[:key], lastUpdate: randomKey[:lastUpdate]}
+            render json: { status: "SUCCESS", key: randomKey, lastUpdate: current_time}
         end
     end
 
@@ -38,6 +39,16 @@ class KeyStoreController < ApplicationController
             render json: { status: "SUCCESS", key: key, lastUpdate: current_time}
         else
             render json: { status: "ERROR", message: "Invalid or expired key"}, status: 404
+        end
+    end
+
+    def refresh
+        key = params[:key]
+
+        if KeyStoreHelper::AVAILABLE_KEYS.update(key)
+            render json: { status: "SUCCESS"}
+        else
+            render json: { status: "ERROR", message: "Invalid, blocked or expired key"}, status: 404
         end
     end
 

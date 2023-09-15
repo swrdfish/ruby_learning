@@ -63,7 +63,7 @@ module KeyStoreHelper
                 @tail = node.prev
             end
 
-            if head == nil
+            if @head == nil
                 @head = node
                 @tail = node
             else
@@ -125,8 +125,9 @@ module KeyStoreHelper
         end
 
         def update(key)
-            node = @map[key]
-            if node
+            index = @map[key]
+            if index != nil
+                node = @array[index]
                 node.timestamp = Time.now
                 @list.update(node)
 
@@ -142,7 +143,7 @@ module KeyStoreHelper
                 return nil
             end
 
-            return { key: node.value, lastUpdate: node.timestamp}
+            return node.value
         end
 
         def length
