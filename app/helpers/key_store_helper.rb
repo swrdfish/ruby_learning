@@ -109,7 +109,11 @@ module KeyStoreHelper
 
         def getRandom
             node = @array.sample
-            return node.value
+            return { key: node.value, createdAt: node.timestamp}
+        end
+
+        def length
+            @array.length()
         end
 
         def purgeOld(timeout)
